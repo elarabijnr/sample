@@ -33,12 +33,16 @@ workflows:
           cd ios
           rm -rf Pods Podfile.lock # Ensure a clean install
           pod install --verbose
-          ls -la # Debugging step to list files
-          if [ ! -f "sample.xcworkspace" ]; then
-            echo "Error: sample.xcworkspace not found!"
+          ls -la # Debugging step to check files
+          
+          WORKSPACE_NAME="sample.xcworkspace"
+          
+          if [ ! -d "$WORKSPACE_NAME" ]; then
+            echo "Error: $WORKSPACE_NAME not found in $(pwd)!"
             exit 1
           fi
-          xcodebuild -workspace sample.xcworkspace -scheme sample -configuration Release -sdk iphoneos build
+          
+          xcodebuild -workspace $WORKSPACE_NAME -scheme sample -configuration Release -sdk iphoneos build
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
       - ios/build/**/*.ipa
