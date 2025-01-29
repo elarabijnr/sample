@@ -28,24 +28,8 @@ workflows:
       - name: Build Android app
         script: |
           cd android && ./gradlew assembleRelease
-      - name: Build iOS app
-        script: |
-          cd ios
-          rm -rf Pods Podfile.lock # Ensure a clean install
-          pod install --verbose
-          ls -la # Debugging step to check files
-          
-          WORKSPACE_NAME="sample.xcworkspace"
-          
-          if [ ! -d "$WORKSPACE_NAME" ]; then
-            echo "Error: $WORKSPACE_NAME not found in $(pwd)!"
-            exit 1
-          fi
-          
-          xcodebuild -workspace $WORKSPACE_NAME -scheme sample -configuration Release -sdk iphoneos build
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
-      - ios/build/**/*.ipa
     publishing:
       email:
         recipients:
