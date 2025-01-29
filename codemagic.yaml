@@ -31,7 +31,9 @@ workflows:
       - name: Build iOS app
         script: |
           cd ios
-          pod install
+          rm -rf Pods Podfile.lock # Ensure a clean install
+          pod install --verbose
+          ls -la # Debugging step to list files
           if [ ! -f "YourApp.xcworkspace" ]; then
             echo "Error: YourApp.xcworkspace not found!"
             exit 1
@@ -42,6 +44,6 @@ workflows:
       - ios/build/**/*.ipa
     publishing:
       email:
-        recipients:
+        recipients: 
           - "elarabijnr@gmail.com"
           - "kengyap@upm.edu.my"
