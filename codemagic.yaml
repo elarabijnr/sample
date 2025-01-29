@@ -10,11 +10,6 @@ workflows:
         EXPO_TOKEN: "your-expo-token"  # Set this in Codemagic UI for security
       groups:
         - app_credentials # Reference environment variable groups for signing
-      cache:
-        cache_paths:
-          - ~/.npm
-          - ~/.gradle/caches
-          - ~/.gradle/wrapper
     triggering:
       events:
         - push
