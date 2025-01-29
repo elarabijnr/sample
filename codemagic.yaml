@@ -1,27 +1,41 @@
 workflows:
-  react_native_tally:
-    name: React Native Tally App
+  react-native-app:
+    name: React Native Build
+    max_build_duration: 120
     instance_type: mac_mini_m1
     environment:
       vars:
-        EXPO_TOKEN: "\${EXPO_TOKEN}" # Set this in Codemagic UI under Environment Variables
-      node: 18
+        NODE_VERSION: 18
+        JAVA_VERSION: 17
+        EXPO_TOKEN: "your-expo-token"  # Set this in Codemagic UI for security
+      groups:
+        - app_credentials # Reference environment variable groups for signing
+      cache:
+        cache_paths:
+          - ~/.npm
+          - ~/.gradle/caches
+          - ~/.gradle/wrapper
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: "main"
+          include: true
+          source: true
     scripts:
       - name: Install dependencies
         script: |
           npm install
-      - name: Log in to Expo
+      - name: Build Android app
         script: |
-          npx expo login --non-interactive --username "\${EXPO_USERNAME}" --password "\${EXPO_PASSWORD}"
-      - name: Build Android APK
+          cd android && ./gradlew assembleRelease
+      - name: Build iOS app
         script: |
-          npx eas build --platform android --profile preview --non-interactive
-      - name: Build iOS IPA (if applicable)
-        script: |
-          npx eas build --platform ios --profile preview --non-interactive
+          cd ios && pod install && xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release -sdk iphoneos build
     artifacts:
-      - build/**/android/**/*.apk
-      - build/**/ios/**/*.ipa
+      - android/app/build/outputs/apk/release/*.apk
+      - ios/build/**/*.ipa
     publishing:
       email:
         recipients:
