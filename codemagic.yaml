@@ -30,7 +30,13 @@ workflows:
           cd android && ./gradlew assembleRelease
       - name: Build iOS app
         script: |
-          cd ios && pod install && xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release -sdk iphoneos build
+          cd ios
+          pod install
+          if [ ! -f "YourApp.xcworkspace" ]; then
+            echo "Error: YourApp.xcworkspace not found!"
+            exit 1
+          fi
+          xcodebuild -workspace YourApp.xcworkspace -scheme YourApp -configuration Release -sdk iphoneos build
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
       - ios/build/**/*.ipa
